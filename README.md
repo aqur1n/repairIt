@@ -14,6 +14,7 @@ A utility that will help you manage your disks and check the integrity of your O
 | CPU    | Tier 1    | Tier 1                   |
 | GPU    | 1x Tier 1 | 1x Tier 1                |
 | RAM    | 1x Tier 1 | 1x Tier 1.5 or 2x Tier 1 |
+
 *As well as the screen and keyboard*
 
 ### Download and install
