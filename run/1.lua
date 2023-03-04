@@ -25,7 +25,7 @@ function cmpnnts.gpu(cmp, adr)
         )
     else
         return string.format(
-            "(%s) Screen: None", 
+            "(%s) Could not get information about the GPU", 
             string.sub(adr, 1, 4)
         )
     end
@@ -38,7 +38,7 @@ function cmpnnts.filesystem(cmp, adr)
     )
 end
 
-function cmpnnts.drive(cmp, adr) -- test
+function cmpnnts.drive(cmp, adr)
     return string.format(
         "(%s) Label: %s | Sector size: %db", 
         string.sub(adr, 1, 4), string.sub(cmp.getLabel(), 1, 10), cmp.getSectorSize()
@@ -73,7 +73,6 @@ local info = {}
 local data, page = {}, 0
 
 function info.init()
-    gpupoxy.set(2, 3, "Information about PC components")
     gpupoxy.set(2, 5, "Reading...")
     data = {}
 
@@ -85,6 +84,7 @@ function info.init()
             if data[v] then data[v][k] = cmpnnts.def(k)
             else data[v] = {[k] = cmpnnts.def(k)} end
         end
+        computer.pullSignal(0)
     end
 
     gpupoxy.fill(2, 5, 10, 1, " ")
@@ -99,6 +99,7 @@ end
 function info.draw() 
     normalcolour()
     gpupoxy.fill(1, 5, sw, sh - 7, " ")
+    gpupoxy.set(2, 3, "Information about PC components")
 
     local i = 0 - page
     for n, t in pairs(data) do
@@ -153,7 +154,6 @@ function info.signal(signal)
             local d = true
             for k, _ in pairs(data[signal[3]]) do if k then d = false end break end
             if d then data[signal[3]] = nil end
-            d = nil
 
             info.draw()
         end
@@ -163,7 +163,7 @@ end
 function info.update() 
     if data["computer"] then
         for adr in component.list("computer") do
-            data["computer"][adr] = cmpnnts["computer"](component.proxy(adr), adr)
+            data["computer"][adr] = cmpnnts.computer(component.proxy(adr), adr)
         end
     end
 end
