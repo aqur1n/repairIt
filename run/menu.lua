@@ -10,8 +10,7 @@ end
 
 function menu.draw() 
     for i = 1, #lst do
-        if i == slctd and lst[i] ~= " " then inversioncolour()
-        else normalcolour() end
+        if i == slctd and lst[i] ~= " " then inversioncolour() else normalcolour() end
         gpupoxy.set(centralize(lst[i]), 5 + i, lst[i])
     end
 
@@ -39,9 +38,7 @@ function menu.signal(signal)
             end
             menu.draw()
         elseif signal[4] == 28 then
-            if not endswith(lst[slctd], "]") then
-                stmdl(slctd)
-            end
+            stmdl(slctd)
         end
     end
 end

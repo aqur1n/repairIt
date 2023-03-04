@@ -32,33 +32,27 @@ end
 function drawTitle()
     gpupoxy.fill(1, 1, sw, sh, " ")
 
-    gpupoxy.set(1, 1, "╒")
-    gpupoxy.set(sw - 6, 1, "╕")
-
-    gpupoxy.fill(2, 1, sw - 8, 1, "═")
-    gpupoxy.fill(2, 4, sw - 8, 1, "─")
-
-    gpupoxy.fill(sw - 6, 2, 1, 3, "│")
-    gpupoxy.fill(1, 2, 1, 3, "│")
-
+    gpupoxy.set(1, 1, "╒") 
+    gpupoxy.set(sw, 1, "╕")
     gpupoxy.set(1, 4, "└")
-    gpupoxy.set(sw - 6, 4, "┘")
+    gpupoxy.set(sw, 4, "┘")
+
+    gpupoxy.fill(2, 1, sw - 2, 1, "═")
+    gpupoxy.fill(2, 4, sw - 2, 1, "─")
+    gpupoxy.fill(sw, 2, 1, 2, "│")
+    gpupoxy.fill(1, 2, 1, 2, "│")
 
     gpupoxy.set(2, 2, "repairIt " .. version)
 
-    -- --
-
     gpupoxy.set(1, sh - 2, "╒")
-    gpupoxy.set(sw - 6, sh - 2, "╕")
-
-    gpupoxy.fill(2, sh - 2, sw - 8, 1, "═")
-    gpupoxy.fill(2, sh, sw - 8, 1, "─")
-
-    gpupoxy.set(sw - 6, sh - 1, "│")
-    gpupoxy.set(1, sh - 1, "│")
-
+    gpupoxy.set(sw, sh - 2, "╕")
     gpupoxy.set(1, sh, "└")
-    gpupoxy.set(sw - 6, sh, "┘")
+    gpupoxy.set(sw, sh, "┘")
+
+    gpupoxy.fill(2, sh - 2, sw - 2, 1, "═")
+    gpupoxy.fill(2, sh, sw - 2, 1, "─")
+    gpupoxy.set(sw, sh - 1, "│")
+    gpupoxy.set(1, sh - 1, "│")
 
     gpupoxy.set(2, sh - 1, "Moving: ⇅, Choose: Enter, Return: M, Reload: R")
 end
@@ -84,13 +78,11 @@ function dfl(path)
 		local data, chunk = ""
 		while true do
 			chunk = fsproxy.read(stream, math.huge)
-			if chunk then data = data .. chunk
-            else break end
+			if chunk then data = data .. chunk else break end
 		end
 		fsproxy.close(stream)
 		local result, reason = load(data, "=" .. path)
-		if result then return result()
-        else error(reason) end
+		if result then return result() else error(reason) end
 	end
 end
 
@@ -105,7 +97,6 @@ else
         return result
     end
 
-
     local files = fsproxy.list("/run/")
     for i, f in ipairs(files) do
         if endswith(f, ".lua") then
@@ -118,7 +109,6 @@ end
 local module = nil
 function stmdl(name)
     module = imprt("/run/" .. name .. ".lua")
-
     if module then
         drawTitle()
         module.init()
