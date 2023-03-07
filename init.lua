@@ -1,28 +1,28 @@
 fsproxy = component.proxy(component.proxy(component.list("eeprom")()).getData())
-gpupoxy = component.proxy(component.list("gpu")())
+gpuproxy = component.proxy(component.list("gpu")())
 
-gpupoxy.bind(component.list("screen")(), true)
+gpuproxy.bind(component.list("screen")(), true)
 
-sw, sh = gpupoxy.getResolution()
-version = "0.1a (Full)"
+sw, sh = gpuproxy.getResolution()
+version = "0.1a (Full) " .. _VERSION
 
 function endswith(str, ending)
     return string.sub(str, -#ending) == ending
 end
 
 function normalcolour()
-    gpupoxy.setBackground(0x0)
-	gpupoxy.setForeground(0xFFFFFF)
+    gpuproxy.setBackground(0x0)
+	gpuproxy.setForeground(0xFFFFFF)
 end
 
 function disabledcolour()
-    gpupoxy.setBackground(0x0)
-	gpupoxy.setForeground(0x878787)
+    gpuproxy.setBackground(0x0)
+	gpuproxy.setForeground(0x878787)
 end
 
 function inversioncolour()
-    gpupoxy.setBackground(0xFFFFFF) 
-	gpupoxy.setForeground(0x0)
+    gpuproxy.setBackground(0xFFFFFF) 
+	gpuproxy.setForeground(0x0)
 end
 
 function centralize(text)
@@ -30,40 +30,41 @@ function centralize(text)
 end
 
 function drawTitle()
-    gpupoxy.fill(1, 1, sw, sh, " ")
+    normalcolour()
+    gpuproxy.fill(1, 1, sw, sh, " ")
 
-    gpupoxy.set(1, 1, "╒") 
-    gpupoxy.set(sw, 1, "╕")
-    gpupoxy.set(1, 4, "└")
-    gpupoxy.set(sw, 4, "┘")
+    gpuproxy.set(1, 1, "╒") 
+    gpuproxy.set(sw, 1, "╕")
+    gpuproxy.set(1, 4, "└")
+    gpuproxy.set(sw, 4, "┘")
 
-    gpupoxy.fill(2, 1, sw - 2, 1, "═")
-    gpupoxy.fill(2, 4, sw - 2, 1, "─")
-    gpupoxy.fill(sw, 2, 1, 2, "│")
-    gpupoxy.fill(1, 2, 1, 2, "│")
+    gpuproxy.fill(2, 1, sw - 2, 1, "═")
+    gpuproxy.fill(2, 4, sw - 2, 1, "─")
+    gpuproxy.fill(sw, 2, 1, 2, "│")
+    gpuproxy.fill(1, 2, 1, 2, "│")
 
-    gpupoxy.set(2, 2, "repairIt " .. version)
+    gpuproxy.set(2, 2, "repairIt " .. version)
 
-    gpupoxy.set(1, sh - 2, "╒")
-    gpupoxy.set(sw, sh - 2, "╕")
-    gpupoxy.set(1, sh, "└")
-    gpupoxy.set(sw, sh, "┘")
+    gpuproxy.set(1, sh - 2, "╒")
+    gpuproxy.set(sw, sh - 2, "╕")
+    gpuproxy.set(1, sh, "└")
+    gpuproxy.set(sw, sh, "┘")
 
-    gpupoxy.fill(2, sh - 2, sw - 2, 1, "═")
-    gpupoxy.fill(2, sh, sw - 2, 1, "─")
-    gpupoxy.set(sw, sh - 1, "│")
-    gpupoxy.set(1, sh - 1, "│")
+    gpuproxy.fill(2, sh - 2, sw - 2, 1, "═")
+    gpuproxy.fill(2, sh, sw - 2, 1, "─")
+    gpuproxy.set(sw, sh - 1, "│")
+    gpuproxy.set(1, sh - 1, "│")
 
-    gpupoxy.set(2, sh - 1, "Moving: ⇅, Choose: Enter, Return: M, Reload: R")
+    gpuproxy.set(2, sh - 1, "Moving: ⇅, Choose: Enter, Return: M, Reload: R")
 end
 
 function drawBar(percent)
     local pos = math.floor(percent * sw / 100)
     if percent > 0 then
-        gpupoxy.fill(1, sh, pos, 1, "█")
-        gpupoxy.set(pos, sh, "█▓▒░")
+        gpuproxy.fill(1, sh, pos, 1, "█")
+        gpuproxy.set(pos, sh, "█▓▒░")
     else
-        gpupoxy.fill(1, sh, sw, 1, " ")
+        gpuproxy.fill(1, sh, sw, 1, " ")
     end
     computer.pullSignal(0)
 end
@@ -133,8 +134,8 @@ while true do
     if signal then
         if signal[1] == "component_added" then
             if signal[3] == "screen" then
-                gpupoxy.bind(signal[2], true)
-                sw, sh = gpupoxy.getResolution()
+                gpuproxy.bind(signal[2], true)
+                sw, sh = gpuproxy.getResolution()
                 drawTitle()
                 module.draw()
             end
@@ -142,8 +143,8 @@ while true do
             if signal[3] == "screen" then
                 local cmpnnt = component.list("screen")()
                 if cmpnnt then
-                    gpupoxy.bind(cmpnnt, true)
-                    sw, sh = gpupoxy.getResolution()
+                    gpuproxy.bind(cmpnnt, true)
+                    sw, sh = gpuproxy.getResolution()
                     drawTitle()
                     module.draw()
                 end
