@@ -23,7 +23,7 @@ function cmpnnts.gpu(cmp, adr)
             "(%s) Max Depth: %d | Max resolution: %dx%d | Current depth: %d | Current resolution: %dx%d | Screen: %s", 
             string.sub(adr, 1, 4), cmp.maxDepth(), maxx, maxy, cmp.getDepth(), x, y, string.sub(cmp.getScreen(), 1, 4)
         )
-    else
+    else -- If there is no connected monitor, then all data received from the gpu is nil (Ocelot)
         return string.format(
             "(%s) Could not get information about the GPU", 
             string.sub(adr, 1, 4)
@@ -73,7 +73,7 @@ local info = {}
 local data, page = {}, 0
 
 function info.init()
-    gpupoxy.set(2, 5, "Reading...")
+    gpuproxy.set(2, 5, "Reading...")
     data = {}
 
     for k, v in pairs(component.list()) do
@@ -87,19 +87,19 @@ function info.init()
         computer.pullSignal(0)
     end
 
-    gpupoxy.fill(2, 5, 10, 1, " ")
+    gpuproxy.fill(2, 5, 10, 1, " ")
     info.draw()
 end
 
 local function gpuset(x, y, str)
     if y < 5 or y > sh - 3 then return end
-    gpupoxy.set(x, y, str)
+    gpuproxy.set(x, y, str)
 end
 
 function info.draw() 
     normalcolour()
-    gpupoxy.fill(1, 5, sw, sh - 7, " ")
-    gpupoxy.set(2, 3, "Information about PC components")
+    gpuproxy.fill(1, 5, sw, sh - 7, " ")
+    gpuproxy.set(2, 3, "Information about PC components")
 
     local i = 0 - page
     for n, t in pairs(data) do
