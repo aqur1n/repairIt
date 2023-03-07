@@ -11,12 +11,12 @@ end
 function menu.draw() 
     for i = 1, #lst do
         if i == slctd and lst[i] ~= " " then inversioncolour() else normalcolour() end
-        gpupoxy.set(centralize(lst[i]), 5 + i, lst[i])
+        gpuproxy.set(centralize(lst[i]), 5 + i, lst[i])
     end
 
     normalcolour()
 
-    gpupoxy.set(2, 3, "Main menu. Select options")
+    gpuproxy.set(2, 3, "Main menu. Select options")
 end
 
 function menu.signal(signal) 

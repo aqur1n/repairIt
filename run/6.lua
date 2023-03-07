@@ -9,7 +9,7 @@ end
 
 function shutdown.draw() 
     normalcolour()
-    gpupoxy.set(2, 3, "Shutdown...")
+    gpuproxy.set(2, 3, "Shutdown...")
 end
 
 function shutdown.signal(signal) end
