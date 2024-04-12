@@ -1,162 +1,113 @@
-fsproxy = component.proxy(component.proxy(component.list("eeprom")()).getData())
-gpuproxy = component.proxy(component.list("gpu")())
+cmp = component
+fs, gpu = cmp.proxy(cmp.proxy(cmp.list("eeprom")()).getData()), cmp.proxy(cmp.list("gpu")())
 
-gpuproxy.bind(component.list("screen")(), true)
+gpu.bind(cmp.list("screen")(), true)
+sw, sh = gpu.getResolution()
 
-sw, sh = gpuproxy.getResolution()
-version = "0.1a (Full) " .. _VERSION
-
-function endswith(str, ending)
-    return string.sub(str, -#ending) == ending
+if fs.getLabel() ~= "repairIt" then
+    fs.setLabel("repairIt")
 end
 
-function normalcolour()
-    gpuproxy.setBackground(0x0)
-	gpuproxy.setForeground(0xFFFFFF)
-end
+function dofile(path)
+	local strm, rsn = fs.open(path, "r")
+	if strm then
+		local d, c = ""
+		while true do
+			c = fs.read(strm, math.huge)
+			if c then d = d .. c else break end
+		end
+		fs.close(strm)
 
-function disabledcolour()
-    gpuproxy.setBackground(0x0)
-	gpuproxy.setForeground(0x878787)
-end
-
-function inversioncolour()
-    gpuproxy.setBackground(0xFFFFFF) 
-	gpuproxy.setForeground(0x0)
+		local r, rsn = load(d, "=" .. path)
+		if r then return r() else error(rsn) end
+	else
+		error(rsn)
+	end
 end
 
 function centralize(text)
 	return math.floor(sw / 2 - #tostring(text) / 2)
 end
 
-function drawTitle()
-    normalcolour()
-    gpuproxy.fill(1, 1, sw, sh, " ")
+VERSION = "0.1a (Full) " .. _VERSION
 
-    gpuproxy.set(1, 1, "╒") 
-    gpuproxy.set(sw, 1, "╕")
-    gpuproxy.set(1, 4, "└")
-    gpuproxy.set(sw, 4, "┘")
+-- loading libraries into globals
+color = dofile("/libs/color.lua")
+keyboard = dofile("/libs/keyboard.lua")
+ui = dofile("/libs/ui.lua")
 
-    gpuproxy.fill(2, 1, sw - 2, 1, "═")
-    gpuproxy.fill(2, 4, sw - 2, 1, "─")
-    gpuproxy.fill(sw, 2, 1, 2, "│")
-    gpuproxy.fill(1, 2, 1, 2, "│")
-
-    gpuproxy.set(2, 2, "repairIt " .. version)
-
-    gpuproxy.set(1, sh - 2, "╒")
-    gpuproxy.set(sw, sh - 2, "╕")
-    gpuproxy.set(1, sh, "└")
-    gpuproxy.set(sw, sh, "┘")
-
-    gpuproxy.fill(2, sh - 2, sw - 2, 1, "═")
-    gpuproxy.fill(2, sh, sw - 2, 1, "─")
-    gpuproxy.set(sw, sh - 1, "│")
-    gpuproxy.set(1, sh - 1, "│")
-
-    gpuproxy.set(2, sh - 1, "Moving: ⇅, Choose: Enter, Return: M, Reload: R")
+function screenClear()
+    color.normal()
+    gpu.fill(1, 1, sw, sh, " ")
 end
 
-function drawBar(percent)
-    local pos = math.floor(percent * sw / 100)
-    if percent > 0 then
-        gpuproxy.fill(1, sh, pos, 1, "█")
-        gpuproxy.set(pos, sh, "█▓▒░")
-    else
-        gpuproxy.fill(1, sh, sw, 1, " ")
-    end
-    computer.pullSignal(0)
+function workspaceClear()
+    color.normal()
+    gpu.fill(1, 5, sw, sh-7, " ")
+    gpu.fill(2, 3, sw - 2, 1, " ")
 end
 
-if fsproxy.getLabel() ~= "repairIt" then
-    fsproxy.setLabel("repairIt")
-end
+screenClear()
+ui.title()
 
-function dfl(path)
-	local stream, reason = fsproxy.open(path, "r")
-	if stream then
-		local data, chunk = ""
-		while true do
-			chunk = fsproxy.read(stream, math.huge)
-			if chunk then data = data .. chunk else break end
-		end
-		fsproxy.close(stream)
-		local result, reason = load(data, "=" .. path)
-		if result then return result() else error(reason) end
-	end
-end
+local mdl, signal = nil
 
-if computer.totalMemory() / 1000 < 200 then
-    imprt = dfl
-else
-    loaded = {}
-    function imprt(module)
-        if loaded[module] then return loaded[module] end
-        local result = dfl(module)
-        loaded[module] = result
-        return result
-    end
+function progressSignal(signal)
+    if signal[1] == "component_added" then
+        if signal[3] == "screen" then
+            gpu.bind(signal[2], true)
+            sw, sh = gpu.getResolution()
 
-    local files = fsproxy.list("/run/")
-    for i, f in ipairs(files) do
-        if endswith(f, ".lua") then
-            imprt("/run/" .. f)
+            ui.title()
+            mdl.draw()
         end
-        drawBar(math.floor(#files / i * 100))
-    end
-end
+    elseif signal[1] == "component_removed" then
+        if signal[3] == "screen" then
+            local cmpnnt = component.list("screen")()
+            if cmpnnt then
+                gpu.bind(cmpnnt, true)
+                sw, sh = gpu.getResolution()
 
-local module = nil
-function stmdl(name)
-    module = imprt("/run/" .. name .. ".lua")
-    if module then
-        drawTitle()
-        module.init()
-    else 
-        stmdl("menu")
-    end
-end
-
-drawBar(0)
-
-local upd, upt, signal = 0, 0, nil
-while true do
-    if not module then stmdl("menu") end
-
-    upt = computer.uptime()
-    if upd <= upt then
-        upd = upt + 2
-        module.update()
-    end
-
-    signal = {computer.pullSignal(2)}
-    if signal then
-        if signal[1] == "component_added" then
-            if signal[3] == "screen" then
-                gpuproxy.bind(signal[2], true)
-                sw, sh = gpuproxy.getResolution()
-                drawTitle()
-                module.draw()
+                ui.title()
+                mdl.draw()
             end
-        elseif signal[1] == "component_removed" then
-            if signal[3] == "screen" then
-                local cmpnnt = component.list("screen")()
-                if cmpnnt then
-                    gpuproxy.bind(cmpnnt, true)
-                    sw, sh = gpuproxy.getResolution()
-                    drawTitle()
-                    module.draw()
+        end
+    end
+end
+
+function loadModule(name)
+    mdl = dofile("/run/" .. string.lower(name) .. ".lua")
+    mdl.init()
+end
+
+loadModule("menu")
+
+while true do
+    if mdl.upd ~= nil then
+        mdl.upd()
+    end
+
+    signal = {computer.pullSignal(0.2)}
+    if signal then
+        if signal[1] == "key_down" then
+            if signal[4] == keyboard.M then
+                if mdl.back ~= nil then
+                    mdl.back()
+                else
+                    loadModule("menu")
+                end
+            elseif signal[4] == keyboard.R then
+                mdl.init()
+            else
+                if mdl.keySignal ~= nil then
+                    mdl.keySignal(signal)
                 end
             end
-        elseif signal[1] == "key_down" then
-            if signal[4] == 50 then
-                stmdl("menu")
-            elseif signal[4] == 19 then
-                module.init()
+        elseif signal[1] ~= "key_up" then
+            progressSignal(signal)
+            if mdl.signal ~= nil then
+                mdl.signal(signal)
             end
         end
-
-        module.signal(signal)
     end
 end
