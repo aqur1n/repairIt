@@ -60,6 +60,8 @@ function progressSignal(signal)
 
             ui.title()
             mdl.draw()
+
+            return true
         end
     elseif signal[1] == "component_removed" then
         if signal[3] == "screen" then
@@ -71,8 +73,10 @@ function progressSignal(signal)
                 ui.title()
                 mdl.draw()
             end
+            return true
         end
     end
+    return false
 end
 
 function loadModule(name)

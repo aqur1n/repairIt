@@ -26,7 +26,6 @@ local function rename()
         end
 
         chr, cd = keyboard.waitChar() 
-
         if cd == keyboard.BACKSPACE then
             l = string.sub(l, 1, -2)
         elseif cd == keyboard.ENTER then
@@ -34,7 +33,7 @@ local function rename()
             cmp.invoke(sfs, "setLabel", l)
             drives.draw()
             return  
-        elseif cd >= 200 and cd <= 208 then
+        elseif chr == nil or (cd >= 200 and cd <= 208) then
             drives.draw()
             return
         elseif cd == 57 or keyboard.isAlphabet(cd) then
@@ -64,7 +63,10 @@ local function wipe()
         end
 
         chr, cd = keyboard.waitChar() 
-        if cd == keyboard.ARRW_LEFT then
+        if chr == nil then
+            drives.draw()
+            return
+        elseif cd == keyboard.ARRW_LEFT then
             if s > 1 then s = s - 1
             else s = 2 end
         elseif cd == keyboard.ARRW_RIGHT then

@@ -19,7 +19,9 @@ function keyboard.waitChar()
             if signal[1] == "key_down" then
                 return signal[3], signal[4]
             elseif signal[1] ~= "key_up" then
-                progressSignal(signal)
+                if progressSignal(signal) then
+                    return nil, nil
+                end
             end
         end
     end
