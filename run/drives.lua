@@ -145,6 +145,7 @@ local function drawMenu()
 
     gpu.set(sw - 23, 9, "Total space: " .. dp.spaceTotal() .. " b")
     gpu.set(sw - 23, 10, "Used space: " .. dp.spaceUsed() .. " b")
+    gpu.set(sw - 11, 11, "(" .. math.floor( dp.spaceUsed() / dp.spaceTotal() * 100 ) .. "%)")
 
     for i, v in ipairs(menu) do
         if us == i then 

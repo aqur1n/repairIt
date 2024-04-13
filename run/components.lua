@@ -35,7 +35,7 @@ function cmpData.filesystemLabel(cmp) return string.format(" (%s)", cmp.getLabel
 function cmpData.filesystem(cmp)
     gpu.set(4, 7, "Label: " .. tostring(cmp.getLabel()))
     gpu.set(4, 8, "Total space: " .. cmp.spaceTotal() .. " bytes")
-    gpu.set(4, 9, "Used space: " .. cmp.spaceUsed() .. " bytes")
+    gpu.set(4, 9, "Used space: " .. cmp.spaceUsed() .. " bytes (" .. math.floor(cmp.spaceUsed() / cmp.spaceTotal() * 100) .. "%)")
     gpu.set(4, 10, "Read-only: " .. tostring(cmp.isReadOnly()))
 end
 
