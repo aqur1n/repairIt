@@ -102,7 +102,15 @@ function cmpData.microcontroller(cmp)
 end
 
 function cmpData.data(cmp)
+    local tier = 1
+    if cmp.generateKeyPair ~= nil then
+        tier = 3
+    elseif cmp.encrypt ~= nil then
+        tier = 2
+    end
+
     gpu.set(4, 7, "Limit: " .. cmp.getLimit())
+    gpu.set(4, 8, "Tier: " .. tier)
 end
 
 local components, data, up, dl = {}, {}, 0, 0
