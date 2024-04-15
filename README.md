@@ -12,13 +12,15 @@ A utility that will help you manage your disks and check the integrity of your O
 * Check the integrity of OpenOS files (and possibly others) and repair damage (coming soon)
 
 ### System requirements
-|        | Minimal   | Recommended              |
-|--------|-----------|--------------------------|
-| CPU    | Tier 1    | Tier 1                   |
-| GPU    | 1x Tier 1 | 1x Tier 1                |
-| RAM    | 1x Tier 1 | 1x Tier 1.5 or 2x Tier 1 |
+|           | Minimal   | Recommended              |
+|-----------|-----------|--------------------------|
+| CPU       | Tier 1    | Tier 1                   |
+| GPU       | Tier 1    | Tier 1                   |
+| RAM       | 1x Tier 1 | 1x Tier 1.5 or 2x Tier 1 |
+| Screen    | Tier 1    | Tier 2                   |
+| Data Card | -         | Tier 1                   |
 
-*As well as the screen and keyboard*
+*As well as the keyboard*
 
 ### Download and install
 [coming soon]
