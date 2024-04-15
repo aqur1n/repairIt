@@ -207,7 +207,7 @@ local function readBlock(strm)
         end
         blck = ""
     end
-    return blck
+    return d
 end
 
 local function unpack(blck)
