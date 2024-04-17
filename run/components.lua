@@ -116,11 +116,6 @@ end
 local components, data, up, dl = {}, {}, 0, 0
 local stype, saddr = nil, nil
 
-local function gpuset(x, y, str)
-    if y < 5 or y > sh - 3 then return end
-    gpu.set(x, y, str)
-end
-
 local function updData()
     workspaceClear()
     gpu.set(sw / 2 - 3, 6, "Reading...")
@@ -150,7 +145,7 @@ local function drawMenu()
             color.normal() 
         end
         local n = k .. " (" .. tostring(#data[k]) .. ")"
-        gpuset(centralize(n), 6 + i - si, n)
+        ui.gpuSet(centralize(n), 6 + i - si, n)
         i = i + 1
     end
 
@@ -175,9 +170,9 @@ local function drawInfo()
         end  
         
         if cmpData[stype .. "Label"] ~= nil then
-            gpuset(2, 5 + i, v .. cmpData[stype .. "Label"](cmp.proxy(v)))
+            ui.gpuSet(2, 5 + i, v .. cmpData[stype .. "Label"](cmp.proxy(v)))
         else
-            gpuset(v, 5 + i, v)
+            ui.gpuSet(v, 5 + i, v)
         end
     end
 end

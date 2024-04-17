@@ -68,5 +68,9 @@ function ui.warn(lines)
     return
 end
 
+function ui.gpuSet(x, y, str)
+    if y < 5 or y > sh - 3 then return end
+    gpu.set(x, y, str)
+end
 
 return ui
