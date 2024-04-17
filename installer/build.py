@@ -20,7 +20,6 @@ FILES: dict[str, FilesData] = {
     )
 }
 WORK_DIR = __file__.split("installer", 1)[0][:-1]
-IGNORE_LINE = ["", " ", "    ", "\n"]
 
 chdir(WORK_DIR)
 
@@ -32,15 +31,30 @@ def remove_spaces(string: str) -> str:
         return remove_spaces(string)
     return string
 
-PACK_CHARS = [", ", "{ ", " }", " .. ", " = ", " == ", " ~= ", " >= ", " <= ", " > ", " < ", " ", " + ", " - ", " / ", " * "]  
+PACK_CHARS = [", ", "{ ", " }", " .. ", " = ", " == ", " ~= ", " >= ", " <= ", " > ", " < ", " ", " + ", " - ", " / ", " * "]
+REPLACEMENTS = {
+    ",": ",", 
+    "{": "{"
+}
+IGNORE_LINE = ["", " ", "    ", "\n"]
 def pack(line: str) -> str:
-    splited_line = line.split("\"")
-    for i, _ in enumerate(splited_line):
+    lines = []
+    for i, l in enumerate(line.split("\"")):
         if i % 2 == 0:
-            for char in PACK_CHARS:
-                splited_line[i] = splited_line[i].replace(char, char.replace(" ", ""))
+            chunk = l.split("--", 1)[0].replace("  ", " ")
+            if i == 0: 
+                chunk = remove_spaces(chunk)
 
-    return "\"".join(splited_line)
+            for char in PACK_CHARS:
+                chunk = chunk.replace(char, char.replace(" ", ""))
+            for k in REPLACEMENTS:
+                chunk = chunk.replace(k, REPLACEMENTS[k])
+                
+            lines.append(chunk)
+        else:
+            lines.append(l)
+
+    return "\"".join(lines)
 
 def scan(files: list, directories: list, files_data: FilesData = FILES["FULL"], dir: str = WORK_DIR) -> None:
     for file in listdir(dir):
@@ -68,11 +82,9 @@ def write_files(file: TextIOWrapper, files: list[str], files_data: FilesData = F
         file.write(f"file={files_data.rename.get(name, name)}")
         with open(fl, mode = "r", encoding = "utf-8") as code:
             for l in code.readlines():
-                line = l.split("--", 1)[0]
-                if line in IGNORE_LINE:
+                if l.split("--", 1)[0] in IGNORE_LINE:
                     continue
-
-                file.write(pack(remove_spaces(line).replace("\n", "").replace("  ", " ")))
+                file.write(pack(l.replace("\n", "")))
             file.write("")
 
 # ----------------------------------------------------
