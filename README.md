@@ -5,13 +5,13 @@
 
 A utility that will help you manage your disks and check the integrity of your OS files.
 
-### Features
+## Features
 * Running without an OS
 * View information about the components of your computer
 * View the contents of disks and change their properties (coming soon)
 * Check the integrity of OpenOS files (and possibly others) and repair damage (coming soon)
 
-### System requirements
+## System requirements
 |           | Minimal   | Recommended              |
 |-----------|-----------|--------------------------|
 | CPU       | Tier 1    | Tier 1                   |
@@ -22,8 +22,12 @@ A utility that will help you manage your disks and check the integrity of your O
 
 *As well as the keyboard*
 
-### Download and install
-[coming soon]
+## Download and install
+### OpenOS
+* Run this command in the console:
+```
+wget -f https://raw.githubusercontent.com/aqur1n/repairIt/master/installer/openos.lua /tmp/repairit.lua && /tmp/repairit.lua
+```
 
-### Useful links
+## Useful links
 * [Discord server](https://discord.gg/v4hC2z4ZHh)
