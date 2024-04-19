@@ -1,6 +1,8 @@
 local component = require("component")
 local io = require("io")
 local internet = require("internet")
+local shell = require("shell")
+local filesystem = require("filesystem")
 
 local rawGithubUrl = "https://raw.githubusercontent.com/aqur1n/repairIt"
 
@@ -41,52 +43,39 @@ else
     selectedFilesystem = component.proxy(availableDisks[tonumber(sf)])
 end
 
--- функции говна
-local function request(url, chunkCall)
-    local rslt, rspns = pcall(internet.request, url, nil, {["user-agent"]="Wget/OpenComputers"})
-    if rslt then
-        for chunk in rspns do
-            chunkCall(chunk)
-        end
-    else
-        io.write("HTTP request failed: " .. rspns .. "\n")
-        return false
-    end
-    return true
-end
-
+-- функции
 local function download(url, path)
-    local strm, rsn = selectedFilesystem.open(path, "wb")
-    if not strm then
+    local file, rsn = filesystem.open(path, "wb")
+    if not file then
         return io.write("Failed opening file for writing: " .. rsn)
     end
 
     local rslt, rspns = pcall(internet.request, url, nil, {["user-agent"]="Wget/OpenComputers"})
     if rslt then
         for chunk in rspns do
-            selectedFilesystem.write(strm, chunk)
+            file:write(chunk)
         end
     else
         io.write("HTTP request failed: " .. rspns .. "\n")
         return false
     end
-    selectedFilesystem.close(strm)
+    file:close()
     return true
 end
 
 local function cfg(path)
-	local strm, rsn = selectedFilesystem.open(path, "r")
-	if strm then
+	local file, rsn = filesystem.open(path, "r")
+	if file then
 		local d, c = ""
 		while true do
-			c = selectedFilesystem.read(strm, math.huge)
+			c = file:read(math.huge)
 			if c then 
                 d = d .. c 
             else 
                 break 
             end
 		end
-		selectedFilesystem.close(strm)
+		file:close()
 
 		local r, rsn = load("return " .. d, "=" .. path) -- Спизжено с майноси (тут все спижено с майноси)
 		if r then 
@@ -97,12 +86,6 @@ local function cfg(path)
 	else
         error("Failed to import the file:" .. rsn)
 	end
-end
-
-local function len(table)
-    local c = 0
-    for _, _ in pairs(table) do c = c + 1 end
-    return c
 end
 
 local function split(str, sep)
@@ -121,76 +104,61 @@ local function join(str, tbl)
     return d
 end
 
-selectedFilesystem.makeDirectory("/tmp")
-download(rawGithubUrl .. "/master/installer/fileslist.cfg", "/tmp/fileslist.cfg")
-local fileslist = cfg("/tmp/fileslist.cfg")
+-- ----------------------------------------
 
--- Выбор версии для установки 
-local version
-if #fileslist.versions == 1 then
-    version = fileslist.versions[1]
-else
-    io.write("What version do you want to install?\n")
-    for i, v in ipairs(fileslist.versions) do
-        print(i .. ") " .. v)
-    end
-
-    io.write("Please enter a version number (\"q\" to exit) [1.." .. #fileslist.versions .. "/q] ")
-    local sv = io.read()
-    if sv == "q" then 
-        io.write("Installation cancelled\n")
-        return 
+local function installerGetVersion(fileslist)
+    if #fileslist.versions == 1 then
+        return fileslist.versions[1]
     else
-        version = fileslist.versions[tonumber(sv)]
+        io.write("What version do you want to install?\n")
+        for i, v in ipairs(fileslist.versions) do
+            print(i .. ") " .. v)
+        end
+
+        io.write("Please enter a version number (\"q\" to exit) [1.." .. #fileslist.versions .. "/q] ")
+        local sv = io.read()
+        if sv == "q" then 
+            io.write("Installation cancelled\n")
+            return 
+        else
+            return fileslist.versions[tonumber(sv)]
+        end
     end
 end
 
--- Выбор билда для установки
-local build
-if #fileslist.builds[version] == 1 then
-    build = fileslist.builds[version][1]
-else
-    io.write("What build do you want to install?\n")
-    for i, v in ipairs(fileslist.builds[version]) do
-        print(i .. ") " .. v)
-    end
-
-    io.write("Please enter a build number (\"q\" to exit) [1.." .. #fileslist.builds[version] .. "/q] ")
-    local sb = io.read()
-    if sb == "q" then 
-        io.write("Installation cancelled\n")
-        return 
+local function installerGetBuild(builds)
+    if #builds == 1 then
+        return builds[1]
     else
-        build = fileslist.builds[version][tonumber(sb)]
+        io.write("What build do you want to install?\n")
+        for i, v in ipairs(builds) do
+            print(i .. ") " .. v)
+        end
+
+        io.write("Please enter a build number (\"q\" to exit) [1.." .. #builds .. "/q] ")
+        local sb = io.read()
+        if sb == "q" then 
+            io.write("Installation cancelled\n")
+            return 
+        else
+            return builds[tonumber(sb)]
+        end
     end
 end
 
--- Установка
-
-while true do
-    io.write("Install repairIt " .. build .. " (" .. version  .. ")?\n")
-    io.write("It's wipe all the data on " .. (selectedFilesystem.getLabel() or string.sub(availableDisks[tonumber(sf)], 1, 8)) .. " [Y/n] ")
-    local r = string.lower(io.read() or "")
-
-    if r == "y" then
-        break
-    elseif r == "n" then
-        io.write("Installation cancelled\n")
-        return
-    end
-end
-
-for _, file in ipairs(selectedFilesystem.list("")) do
-    if file ~= "tmp/" then
-        selectedFilesystem.remove(file)
+local function wipeData()
+    for _, file in ipairs(selectedFilesystem.list("")) do
+        if file ~= "tmp/" then
+            selectedFilesystem.remove(file)
+        end
     end
 end
 
 local unpackData = ""
-local function readBlock(strm)
+local function readBlock(file)
     local d, c, blck = unpackData .. "", "", ""
     while true do
-        c = selectedFilesystem.read(strm, math.huge)
+        c = file:read(math.huge)
     	if c then 
             d = d .. c 
         elseif unpackData == "" then
@@ -243,33 +211,73 @@ local function unpack(blck)
     end
 end
 
-local function unpackBuild()
+local function unpackBuild(path)
     io.write("Unpacking the archive...\n")
 
-    local strm, rsn = selectedFilesystem.open("/tmp/build.rbf", "r")
+    local file, rspn = filesystem.open(path, "r")
     local blck
-	if strm then
+	if file then
         while true do
-            blck = readBlock(strm)
+            blck = readBlock(file)
             if blck == "" then
                 break
             end
             unpack(blck)
         end
-		selectedFilesystem.close(strm)
+		file:close()
 	else
         error("Failed to unpack the file: " .. rsn)
 	end
 end
 
-io.write("Downloading the archive...\n")
-if download("https://github.com/aqur1n/repairIt/releases/download/" .. build .. "/" .. version .. ".rbf", "/tmp/build.rbf") then
-    unpackBuild()
+-- Установка
 
-    io.write("Deleting temporary files...\n")
-    selectedFilesystem.remove("tmp/")
+local args, _ = shell.parse(...)
+if not args[1] then
+    -- selectedFilesystem.makeDirectory("/tmp")
+    download(rawGithubUrl .. "/master/installer/fileslist.cfg", "/tmp/fileslist.cfg")
+    local fileslist = cfg("/tmp/fileslist.cfg")
 
-    io.write("Installation complete\n")
+    local version = installerGetVersion(fileslist)
+    if not version then return end
+    local build = installerGetBuild(fileslist.builds[version])
+    if not build then return end
+
+    while true do
+        io.write("Install repairIt " .. build .. " (" .. version  .. ")?\n")
+        io.write("It's wipe all the data on " .. (selectedFilesystem.getLabel() or string.sub(availableDisks[tonumber(sf)], 1, 8)) .. " [Y/n] ")
+        local r = string.lower(io.read() or "")
+
+        if r == "y" then
+            break
+        elseif r == "n" then
+            io.write("Installation cancelled\n")
+            return
+        end
+    end
+    wipeData()
+
+    io.write("Downloading the archive...\n")
+    if download("https://github.com/aqur1n/repairIt/releases/download/" .. build .. "/" .. version .. ".rbf", "/tmp/build.rbf") then
+        unpackBuild("/tmp/build.rbf")
+    else
+        io.write("Installation cancelled by error\n")
+        return
+    end
 else
-    io.write("Installation cancelled by error\n")
+    while true do
+        io.write("Install repairIt from the package?\n")
+        io.write("It's wipe all the data on " .. (selectedFilesystem.getLabel() or string.sub(availableDisks[tonumber(sf)], 1, 8)) .. " [Y/n] ")
+        local r = string.lower(io.read() or "")
+
+        if r == "y" then
+            break
+        elseif r == "n" then
+            io.write("Installation cancelled\n")
+            return
+        end
+    end
+    wipeData()
+    unpackBuild(args[1])
 end
+io.write("Installation complete\n")
