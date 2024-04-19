@@ -1,6 +1,6 @@
 
 from io import TextIOWrapper
-from os import chdir, listdir, path
+from os import chdir, listdir, path, mkdir
 from time import time
 from typing import Callable
 
@@ -64,6 +64,9 @@ class Commands:
 
 WORK_DIR = __file__.split("installer", 1)[0][:-1]
 chdir(WORK_DIR)
+
+if not path.exists("installer/builds/"):
+    mkdir("installer/builds/")
 
 # ----------------------------------------------------
 
