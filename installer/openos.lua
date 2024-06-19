@@ -214,7 +214,7 @@ end
 local function unpackBuild(path)
     io.write("Unpacking the archive...\n")
 
-    local file, rspn = filesystem.open(path, "r")
+    local file, rsn = filesystem.open(path, "r")
     local blck
 	if file then
         while true do
