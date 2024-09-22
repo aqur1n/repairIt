@@ -1,6 +1,16 @@
 local drives = {}
-local sfs, us, fsc = nil, 1, 0
+local sfs, us, fsc, spth = nil, 1, 0, nil
+local spm, spf = 0, nil
 
+-- ----------------------------------------------------------
+
+local ExplorerMenu = {
+    {"edit", nil, false},
+    {"info", nil, true},
+    {"delete", nil, false}
+}
+
+-- ----------------------------------------------------------
 
 local function rename()
     ui.drawBox("Rename")
@@ -30,13 +40,16 @@ local function rename()
             l = string.sub(l, 1, -2)
         elseif cd == keyboard.ENTER then
             if l == "" then l = nil end
-            cmp.invoke(sfs, "setLabel", l)
+            local rs, err = pcall(cmp.invoke, sfs, "setLabel", l)
+            if not rs then
+                ui.errorBox(err)
+            end
             drives.draw()
             return  
         elseif chr == nil or (cd >= 200 and cd <= 208) then
             drives.draw()
             return
-        elseif cd == 57 or keyboard.isAlphabet(cd) then
+        elseif keyboard.isAlphabet(cd) then
             if #l < 16 then
                 l = l .. unicode.char(chr)
             end
@@ -73,10 +86,7 @@ local function wipe()
             if s < 2 then s = s + 1
             else s = 1 end
         elseif cd == keyboard.ENTER then
-            if s == 1 then
-                drives.draw()
-                return
-            else
+            if s == 2 then
                 color.normal()
                 gpu.fill(sw / 2 - 11, sh / 2 - 2, 23, 3, " ")
                 gpu.set(sw / 2 - 11, sh / 2 - 2, "Deleting")
@@ -87,15 +97,77 @@ local function wipe()
                 end
                 drives.draw()
                 return
+            else
+                drives.draw()
+                return
             end
         end
     end
 end
 
-local menu = {
-    {"explorer", nil},
-    {"rename", rename},
-    {"wipe all data", wipe}
+-- ----------------------------------------------------------
+
+local function drawInfoBox()
+    gpu.fill(sw - 24, 5, 24, 9, " ")
+    gpu.fill(sw - 24, 5, 24, 1, "═")
+    gpu.fill(sw - 24, 13, 24, 1, "─")
+    gpu.fill(sw - 24, 5, 1, 9, "│")
+    gpu.fill(sw, 5, 1, 9, "│")
+    gpu.set(sw - 24, 5, "╒")
+    gpu.set(sw, 5, "╕") 
+    gpu.set(sw - 24, 13, "└")
+    gpu.set(sw, 13, "┘")
+end
+
+local function drawExplorer()
+    if spth == nil or spth == "" then
+        us = 1
+        spth = "/"
+    elseif string.sub(spth, 1, 1) ~= "/" then
+        spth = "/" .. spth
+    end
+
+    workspaceClear()
+    if #spth < sw - 2 then
+        gpu.set(2, 3, spth)
+    else
+        gpu.set(2, 3, "..." .. string.sub(spth, -sw - 3))
+    end
+
+    drawInfoBox()
+
+    local si = 0
+    if us > sh - 8 then si = us - sh + 8 end
+
+    if us - 1 == 0 then 
+        color.inversion()
+    else 
+        color.normal() 
+    end
+    ui.gpuSet(2, 6 - si, "...")
+
+    spm = 0
+    for i, file in ipairs(cmp.invoke(sfs, "list", spth)) do
+        if us - 1 == i then 
+            color.inversion()
+            spf = spth .. file
+        else 
+            color.normal() 
+        end
+
+        ui.gpuSet(2, 6 + i - si, file)
+        spm = i
+    end
+
+    color.normal()
+    if spm - si > sh - 9 then gpu.set(sw - 25, sh - 3, "▼") end
+    if si > 1 then gpu.set(sw - 25, 5, "▲") end
+end
+
+local driveMenu = {
+    {"explorer", drawExplorer, false},
+    {"rename", rename, true},
+    {"wipe all data", wipe, true}
 }
 
 local function drawDisks()
@@ -129,15 +201,7 @@ local function drawMenu()
     workspaceClear()
     gpu.set(2, 3, "Select an action")
 
-    gpu.fill(sw - 24, 5, 24, 9, " ")
-    gpu.fill(sw - 24, 5, 24, 1, "═")
-    gpu.fill(sw - 24, 13, 24, 1, "─")
-    gpu.fill(sw - 24, 5, 1, 9, "│")
-    gpu.fill(sw, 5, 1, 9, "│")
-    gpu.set(sw - 24, 5, "╒")
-    gpu.set(sw, 5, "╕") 
-    gpu.set(sw - 24, 13, "└")
-    gpu.set(sw, 13, "┘")
+    drawInfoBox()
 
     local dp = cmp.proxy(sfs)
     gpu.set(sw - 23, 6, "Label: " .. tostring(dp.getLabel()))
@@ -145,12 +209,12 @@ local function drawMenu()
 
     gpu.set(sw - 23, 9, "Total space: " .. dp.spaceTotal() .. " b")
     gpu.set(sw - 23, 10, "Used space: " .. dp.spaceUsed() .. " b")
-    gpu.set(sw - 11, 11, "(" .. math.floor( dp.spaceUsed() / dp.spaceTotal() * 100 ) .. "%)")
+    gpu.set(sw - 11, 11, "(" .. math.floor(dp.spaceUsed() / dp.spaceTotal() * 100) .. "%)")
 
-    for i, v in ipairs(menu) do
+    for i, v in ipairs(driveMenu) do
         if us == i then 
             color.inversion()
-        elseif cmp.invoke(sfs, "isReadOnly") and i > 1 then
+        elseif v[3] and cmp.invoke(sfs, "isReadOnly") then
             color.grey()
         else
             color.normal() 
@@ -158,6 +222,8 @@ local function drawMenu()
         gpu.set(2, 5 + i, v[1])
     end
 end
+
+-- ----------------------------------------------------------
 
 function drives.init() 
     screenClear()
@@ -168,20 +234,32 @@ end
 function drives.draw() 
     if sfs == nil then
         drawDisks()
-    else
+    elseif spth == nil then
         drawMenu()
+    else
+        drawExplorer()
     end
 end
 
 function drives.upd() end
 
 function drives.back() 
+    us = 1
     if sfs == nil then
         loadModule("menu")
-    else
-        us = 1
+    elseif spth == nil then
         sfs = nil
-        drawDisks()
+        drives.draw() 
+    else
+        if spth == "/" then
+            spth = nil
+            drives.draw() 
+        else
+            local drs = string.split(spth, "/")
+            table.remove(drs, #drs)
+            spth = string.join("/", drs)
+            drives.draw()
+        end
     end
 end
 
@@ -193,8 +271,14 @@ function drives.keySignal(signal)
             else
                 us = 1
             end
+        elseif spth == nil then
+            if us < #driveMenu then
+                us = us + 1
+            else
+                us = 1
+            end
         else
-            if us < #menu then
+            if us < spm + 1 then
                 us = us + 1
             else
                 us = 1
@@ -208,11 +292,17 @@ function drives.keySignal(signal)
             else
                 us = #fsc
             end
+        elseif spth == nil then
+            if us > 1 then
+                us = us - 1
+            else
+                us = #driveMenu
+            end
         else
             if us > 1 then
                 us = us - 1
             else
-                us = #menu
+                us = spm + 1
             end
         end
         drives.draw() 
@@ -221,12 +311,28 @@ function drives.keySignal(signal)
             sfs = fsc[us]
             us = 1
             drives.draw()
-        else
+        elseif spth == nil then
             if cmp.invoke(sfs, "isReadOnly") and us > 1 then
                 ui.warn({"This action is not", "possible:", "Read-only disk"})
                 drives.draw()
             else
-                menu[us][2]()
+                driveMenu[us][2]()
+            end
+        else
+            if spth ~= "/" and us == 1 then
+                local drs = string.split(spth, "/")
+                table.remove(drs, #drs)
+                spth = string.join("/", drs)
+                drives.draw()
+            elseif spth == "/" and us == 1 then
+                drives.back()
+            elseif cmp.invoke(sfs, "isDirectory", spf) then
+                us = 1
+                spth = spf
+                drives.draw()
+            else
+                -- file menu
+                drives.draw()
             end
         end
     end

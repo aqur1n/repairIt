@@ -23,12 +23,12 @@ class FilesData:
 FILES: list[FilesData] = [
     FilesData(
         "FULL",
-        ignore = ["installer", "LICENSE", "README.md", ".git", ".gitignore"],
+        ignore = ["installer", "LICENSE", "README.md", ".git", ".gitignore", "empty.lua"],
         file_replace = {"/init.lua": {"%REPAIRIT_VERSION%": "Full"}}
     ),
     FilesData(
         "LITE",
-        ignore = ["installer", "LICENSE", "README.md", ".git", ".gitignore", "hashes", "bios"],
+        ignore = ["installer", "LICENSE", "README.md", ".git", ".gitignore", "empty.lua", "hashes", "bios"],
         file_replace = {"/init.lua": {"%REPAIRIT_VERSION%": "Lite"}}
     )
 ]

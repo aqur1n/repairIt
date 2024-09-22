@@ -1,6 +1,6 @@
 local ui = {}
 
-function ui.title()
+function ui.header()
     gpu.set(1, 1, "╒") 
     gpu.set(sw, 1, "╕")
     gpu.set(1, 4, "└")
@@ -12,6 +12,10 @@ function ui.title()
     gpu.fill(1, 2, 1, 2, "│")
 
     gpu.set(2, 2, "repairIt " .. VERSION)
+end
+
+function ui.title()
+    ui.header()
 
     gpu.set(1, sh - 2, "╒")
     gpu.set(sw, sh - 2, "╕")
@@ -54,6 +58,19 @@ function ui.drawBox(title)
     gpu.set(sw / 2 + 12, sh / 2 + 5, "┘")
 
     gpu.set(centralize(title), sh / 2 - 3, title)
+end
+
+function ui.errorBox(err)
+    ui.drawBox("Error")
+    for i = 1, math.floor(#err / 22) + 1 do
+        gpu.set(sw / 2 - 11, sh / 2 - 3 + i, string.sub(err, (22 + 1) * (i - 1), 22 * i))
+    end
+    color.inversion()
+    gpu.set(sw / 2 - 1, sh / 2 + 5, "OK")
+    while true do
+        chr, cd = keyboard.waitChar()
+        if cd == keyboard.ENTER then return end
+    end
 end
 
 function ui.warn(lines)

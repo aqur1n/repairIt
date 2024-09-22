@@ -29,7 +29,24 @@ function centralize(text)
 	return math.floor(sw / 2 - #tostring(text) / 2)
 end
 
-VERSION = "0.1a (Full) " .. _VERSION
+string.split = function(str, sep)
+    local t = {}
+    for s in string.gmatch(str, "([^" .. sep .. "]+)") do
+        table.insert(t, s)
+    end
+    return t
+end
+
+string.join = function(str, tbl)
+    local d = ""
+    for _, v in ipairs(tbl) do
+        d = d .. v .. str
+    end
+    return d
+end
+
+
+VERSION = "0.1a (%REPAIRIT_VERSION%) " .. _VERSION
 
 -- loading libraries into globals
 color = dofile("/libs/color.lua")

@@ -4,9 +4,10 @@ local options = {
     {"components", "information about components", "Information about components", 0},
     {"drives", "drives", "Drive management", 1},
     {"repair", "repair OS/BIOS", "Repair OS/BIOS", 2},
+    {"cmd", "console", "Using commands and lua", 3},
 
-    {nil, "reboot", "Reboot the computer", 4},
-    {nil, "shutdown", "Shutdown the computer", 5}
+    {nil, "reboot", "Reboot the computer", 5},
+    {nil, "shutdown", "Shutdown the computer", 6}
 }
 
 
