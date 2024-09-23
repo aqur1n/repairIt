@@ -16,12 +16,13 @@ local function tString(obj)
     elseif t == "table" then
         local s = "{"
         for k, v in pairs(obj) do
-            s = s..","..tostring(k).."="..tostring(v)
+            s = s..tostring(k).."="..tostring(v)..","
         end
+        if string.sub(s, -1) == "," then s = string.sub(s, 1, -2) end
         return s .. "}"
     elseif t == "function" then
         -- TODO
-        return "function"
+        return "function" .. tostring(obj)
     else
         return tostring(obj)
     end
@@ -64,8 +65,8 @@ local function loadCommand()
                 cmds.exit()
                 cmds = nil
             end
-        else
-            luaPrint(err)
+        elseif mcmmds[mi] ~= "" then
+            luaPrint("“" .. mcmmds[mi] .. "” is not an command or executable program.")
         end
     end
 end
@@ -75,7 +76,7 @@ function cmd.init()
     ui.header()
     cmd.draw() 
 
-    local chr, cd
+    local chr, cd, uchr
     while true do
         chr, cd = keyboard.waitChar(0.5) 
         if chr == nil then
@@ -143,10 +144,16 @@ function cmd.init()
                 mcmmds[#mcmmds] = mcmmds[mi]
                 mi = #mcmmds
             end
+
+            uchr = unicode.char(chr) -- Пожалуйста помогите с ру буквами...
+            if #uchr > 1 then 
+                uchr = "?" 
+            end
+
             if cur == 1 then
-                mcmmds[mi] = mcmmds[mi] .. unicode.char(chr)
+                mcmmds[mi] = mcmmds[mi] .. uchr
             else
-                mcmmds[mi] = string.sub(mcmmds[mi], 1, -cur) .. unicode.char(chr) .. string.sub(mcmmds[mi], -cur + 1)
+                mcmmds[mi] = string.sub(mcmmds[mi], 1, -cur) .. uchr .. string.sub(mcmmds[mi], -cur + 1)
             end
         end
         cmd.draw()
@@ -156,7 +163,8 @@ end
 function cmd.draw() 
     gpu.fill(1, sh - 1, sw, 1, "_")
     gpu.fill(1, sh, sw, 1, " ")
-    gpu.set(1, sh, "> ")
+    gpu.set(2, 3, "Use CTRL+M to return to the main menu")
+    gpu.set(1, sh, (cmds and cmds.char or ">") .. " ")
     gpu.set(3, sh, string.sub(mcmmds[mi], -sw - cur + 4))
 
     local pos = 4 + #mcmmds[mi] - cur
