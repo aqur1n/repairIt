@@ -10,7 +10,6 @@ if not component.isAvailable("internet") then
     return io.write("Internet card is required for installation\n")
 end
 
--- Выбор диска для установки
 io.write("Preparing for installation...\n")
 
 local availableDisks = {}
@@ -230,11 +229,8 @@ local function unpackBuild(path)
 	end
 end
 
--- Установка
-
 local args, _ = shell.parse(...)
 if not args[1] then
-    -- selectedFilesystem.makeDirectory("/tmp")
     download(rawGithubUrl .. "/master/installer/fileslist.cfg", "/tmp/fileslist.cfg")
     local fileslist = cfg("/tmp/fileslist.cfg")
 
@@ -255,10 +251,10 @@ if not args[1] then
             return
         end
     end
-    wipeData()
 
     io.write("Downloading the archive...\n")
     if download("https://github.com/aqur1n/repairIt/releases/download/" .. build .. "/" .. version .. ".rbf", "/tmp/build.rbf") then
+        wipeData()  
         unpackBuild("/tmp/build.rbf")
     else
         io.write("Installation cancelled by error\n")
