@@ -1,14 +1,15 @@
 local lua = {
-    session = true
+    session = true,
+    char = "-"
 }
 local code = ""
 local lstStr = ""
 
+print = luaPrint
+
 function lua.start() 
-    --luaPrint("123")
 end
 
--- if session == true then
 function lua.stringSignal(str) 
     if str ~= "" then
         code = code .. "\n" .. lstStr
@@ -25,7 +26,8 @@ function lua.stringSignal(str)
 end
 
 function lua.exit() 
-    luaPrint(">exit")
+    print = nil
+    luaPrint("exit")
 end
 
 return lua
