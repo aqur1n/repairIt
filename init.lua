@@ -46,7 +46,7 @@ string.join = function(str, tbl)
 end
 
 
-VERSION = "0.1a (%REPAIRIT_VERSION%) " .. _VERSION
+VERSION = "0.2a (%REPAIRIT_VERSION%) " .. _VERSION
 
 -- loading libraries into globals
 color = dofile("/libs/color.lua")
