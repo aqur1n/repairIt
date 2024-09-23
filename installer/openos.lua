@@ -157,7 +157,7 @@ local unpackData = ""
 local function readBlock(file)
     local d, c, blck = unpackData .. "", "", ""
     while true do
-        c = file:read(math.huge)
+        c = file:read(256)
     	if c then 
             d = d .. c 
         elseif unpackData == "" then
@@ -201,6 +201,7 @@ local function unpack(blck)
             end
             selectedFilesystem.write(strm, filedata)
             selectedFilesystem.close(strm)
+            filedata = nil
         else
             error("Failed to create the file: " .. rsn)
         end

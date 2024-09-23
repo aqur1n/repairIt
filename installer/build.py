@@ -145,13 +145,14 @@ class Builder:
                             command = False
 
                 file.write("")
-            print(f"[{self.file_data.version}] {self.file_data.rename.get(name, name)} упакован.")
+            print(f"    {self.file_data.rename.get(name, name)} упакован.")
 
 # ----------------------------------------------------
 
 def build(file_data: FilesData) -> None:
     builder = Builder(file_data)
 
+    print(f"=-=-=-=-=-=-=-= {file_data.version} =-=-=-=-=-=-=-=")
     print(f"[{file_data.version}] Сканирование файлов...")
     builder.scan()
     print(f"[{file_data.version}] Сканирование завершено. Директорий: {len(builder.directories)}, файлов: {len(builder.files)}")
