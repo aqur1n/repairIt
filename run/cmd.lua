@@ -5,9 +5,24 @@ local cmds
 local commands = {
     clear = function() 
         cs = {}
-        luaPrint("") 
+        luaPrint("")
+    end,
+    exit = function()
+        luaPrint("Use CTRL+M to return to the main menu")
     end
 }
+commands.help = function()
+    local l = ""
+    for k, _ in pairs(commands) do
+        l = l .. " " .. k
+    end
+
+    for _, v in ipairs(fs.list("/cmds/")) do
+        l = l .. " " .. string.sub(v, 1, -5)
+    end
+
+    luaPrint("Available commands:" .. l)
+end
 
 local function tString(obj)
     local t = type(obj)
