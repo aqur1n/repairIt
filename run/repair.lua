@@ -66,7 +66,7 @@ end
 
 local repairMenu = {
     -- name, func, description
-    {"Repair/Install BIOS", sBios, ""},
+    {"Repair/Install BIOS", sBios, "Repair or reinstall BIOS on your EEPROM"},
     --{"Check and repair OS", sOs, ""}
 }
 
