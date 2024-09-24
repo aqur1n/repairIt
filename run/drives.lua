@@ -5,9 +5,8 @@ local spm, spf = 0, nil
 -- ----------------------------------------------------------
 
 local ExplorerMenu = {
-    {"edit", nil, false},
-    {"info", nil, true},
-    {"delete", nil, false}
+    {"edit", nil, true},
+    {"delete", nil, true}
 }
 
 -- ----------------------------------------------------------
@@ -134,8 +133,6 @@ local function drawExplorer()
         gpu.set(2, 3, "..." .. string.sub(spth, -sw - 3))
     end
 
-    drawInfoBox()
-
     local si = 0
     if us > sh - 8 then si = us - sh + 8 end
 
@@ -160,6 +157,21 @@ local function drawExplorer()
     end
 
     color.normal()
+    drawInfoBox()
+
+    if us > 1 then
+        if cmp.invoke(sfs, "exists", spf) then
+            if not cmp.invoke(sfs, "isDirectory", spf) then
+                gpu.set(sw - 23, 8, "Size:")
+                gpu.set(sw - 19, 9, tostring(cmp.invoke(sfs, "size", spf)) .. " bytes")
+            end
+            gpu.set(sw - 23, 6, "Last modified:")
+            gpu.set(sw - 19, 7, tostring(cmp.invoke(sfs, "lastModified", spf)))
+        end
+    else
+        gpu.set(sw - 23, 6, "Return")
+    end
+
     if spm - si > sh - 9 then gpu.set(sw - 25, sh - 3, "▼") end
     if si > 1 then gpu.set(sw - 25, 5, "▲") end
 end
@@ -312,7 +324,7 @@ function drives.keySignal(signal)
             us = 1
             drives.draw()
         elseif spth == nil then
-            if cmp.invoke(sfs, "isReadOnly") and us > 1 then
+            if cmp.invoke(sfs, "isReadOnly") and driveMenu[us][3] then
                 ui.warn({"This action is not", "possible:", "Read-only disk"})
                 drives.draw()
             else
