@@ -193,7 +193,6 @@ local function drawData()
     end
 end
 
-
 function components.init() 
     screenClear()
     ui.title()

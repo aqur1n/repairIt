@@ -1,7 +1,7 @@
 ![Latest release](https://img.shields.io/github/v/release/aqur1n/repairIt?include_prereleases&label=Latest%20Release&logo=github&sort=semver&style=for-the-badge&logoColor=white)
 ![Lua version](https://img.shields.io/badge/LUA-5.2-green?style=for-the-badge&logo=lua&logoColor=white)
 
-![screenshot](https://user-images.githubusercontent.com/60589309/222772632-02953d8c-452d-4de8-88ca-0afa8e94a0fa.png)
+![image](https://github.com/user-attachments/assets/f95015d8-5555-4512-9878-65ea85b5ed48)
 
 A utility that will help you manage your disks and check the integrity of your OS files.
 
@@ -15,7 +15,7 @@ A utility that will help you manage your disks and check the integrity of your O
 |           | Minimal   | Recommended              |
 |-----------|-----------|--------------------------|
 | CPU       | Tier 1    | Tier 1                   |
-| GPU       | Tier 1    | Tier 1                   |
+| GPU       | Tier 1    | Tier 2                   |
 | RAM       | 1x Tier 1 | 1x Tier 1.5 or 2x Tier 1 |
 | Screen    | Tier 1    | Tier 2                   |
 | Data Card | -         | Tier 1                   |

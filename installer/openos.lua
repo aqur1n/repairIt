@@ -10,7 +10,6 @@ if not component.isAvailable("internet") then
     return io.write("Internet card is required for installation\n")
 end
 
--- Выбор диска для установки
 io.write("Preparing for installation...\n")
 
 local availableDisks = {}
@@ -158,7 +157,7 @@ local unpackData = ""
 local function readBlock(file)
     local d, c, blck = unpackData .. "", "", ""
     while true do
-        c = file:read(math.huge)
+        c = file:read(256)
     	if c then 
             d = d .. c 
         elseif unpackData == "" then
@@ -202,6 +201,7 @@ local function unpack(blck)
             end
             selectedFilesystem.write(strm, filedata)
             selectedFilesystem.close(strm)
+            filedata = nil
         else
             error("Failed to create the file: " .. rsn)
         end
@@ -230,11 +230,8 @@ local function unpackBuild(path)
 	end
 end
 
--- Установка
-
 local args, _ = shell.parse(...)
 if not args[1] then
-    -- selectedFilesystem.makeDirectory("/tmp")
     download(rawGithubUrl .. "/master/installer/fileslist.cfg", "/tmp/fileslist.cfg")
     local fileslist = cfg("/tmp/fileslist.cfg")
 
@@ -255,10 +252,10 @@ if not args[1] then
             return
         end
     end
-    wipeData()
 
     io.write("Downloading the archive...\n")
     if download("https://github.com/aqur1n/repairIt/releases/download/" .. build .. "/" .. version .. ".rbf", "/tmp/build.rbf") then
+        wipeData()  
         unpackBuild("/tmp/build.rbf")
     else
         io.write("Installation cancelled by error\n")
