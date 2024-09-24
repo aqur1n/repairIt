@@ -128,7 +128,7 @@ function ui.select(l, checker, fReason)
             else 
                 color.normal() 
             end
-            ui.gpuSet(centralize(l[i]), 6 + i - mh, l[i])
+            ui.gpuSet(centralize(l[i]), 5 + i - mh, l[i])
         end
 
         chr, cd = keyboard.waitChar() 
@@ -143,25 +143,17 @@ function ui.select(l, checker, fReason)
         elseif cd == keyboard.ARRW_UP then
             if s > 1 then
                 s = s - 1
-            else
-                s = #l
             end
-            if s - mh < 4 then mh = mh - 1 end
         elseif cd == keyboard.ARRW_DOWN then
             if s < #l then
                 s = s + 1
-            else
-                s = 1
             end
-            if s - mh > sh - 9 then mh = mh + 1 end
         end
 
-        if s > sh - 14 then
-            mh = s - sh + 14
-        elseif s < mh then
-            mh = s
-        else
-            mh = 1
+        if s > sh - 8 then 
+            mh = s - sh + 8 
+        elseif s < sh - 7 then
+            mh = 0
         end
     end
 end

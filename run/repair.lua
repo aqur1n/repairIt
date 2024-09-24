@@ -49,7 +49,6 @@ end
 
 local function sBios()
     ui.setDescr("Select the BIOS that you want to install/repair")
-
     local bname = ui.select(tkeys(bioses))
     if bname ~= nil then
         if ui.infoBox("Are you sure? Press ENTER to confirm or another button to cancel", true, true) then
