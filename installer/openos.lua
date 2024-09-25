@@ -3,6 +3,7 @@ local io = require("io")
 local internet = require("internet")
 local shell = require("shell")
 local filesystem = require("filesystem")
+local event = require("event")
 
 local rawGithubUrl = "https://raw.githubusercontent.com/aqur1n/repairIt"
 
@@ -203,6 +204,7 @@ local function unpack(blck)
             selectedFilesystem.write(strm, filedata)
             selectedFilesystem.close(strm)
             filedata = nil
+            event.pull(0.01)
         else
             error("Failed to create the file: " .. rsn)
         end
