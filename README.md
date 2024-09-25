@@ -1,5 +1,5 @@
-![Latest release](https://img.shields.io/github/v/release/aqur1n/repairIt?include_prereleases&label=Latest%20Release&logo=github&sort=semver&style=for-the-badge&logoColor=white)
-![Lua version](https://img.shields.io/badge/LUA-5.2-green?style=for-the-badge&logo=lua&logoColor=white)
+[![Latest release](https://img.shields.io/github/v/release/aqur1n/repairIt?include_prereleases&label=Latest%20Release&logo=github&sort=semver&style=for-the-badge&logoColor=white)](https://github.com/aqur1n/repairIt/releases)
+[![Lua version](https://img.shields.io/badge/LUA-5.2-green?style=for-the-badge&logo=lua&logoColor=white)](https://www.lua.org/manual/5.2/)
 
 ![image](https://github.com/user-attachments/assets/f95015d8-5555-4512-9878-65ea85b5ed48)
 
