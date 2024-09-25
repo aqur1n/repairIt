@@ -9,6 +9,7 @@ A utility that will help you manage your disks and check the integrity of your O
 * Running without an OS
 * View information about the components of your computer
 * View the contents of disks and change their properties (coming soon)
+* Restore/reinstall BIOS
 * Check the integrity of OpenOS files (and possibly others) and repair damage (coming soon)
 
 ## System requirements
@@ -21,6 +22,17 @@ A utility that will help you manage your disks and check the integrity of your O
 | Data Card | -         | Tier 1                   |
 
 *As well as the keyboard*
+
+## Table of information about different builds of repairIt
+|                               | LITE    | FULL |
+|-------------------------------|---------|------|
+| Drive management              | Yes     | Yes  |
+| Viewing the contents of disks | Yes     | Yes  |
+| Console                       | Yes     | Yes  |
+| Viewing components            | Not all | All  |
+| Working with the bios         | No      | Yes  |
+| Working with OS               | No      | Yes  |
+
 
 ## Download and install
 ### OpenOS
