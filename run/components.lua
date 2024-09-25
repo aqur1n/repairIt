@@ -64,7 +64,7 @@ function cmpData.internet(cmp)
     gpu.set(4, 7, "Tcp enabled: " .. tostring(cmp.isTcpEnabled()))
     gpu.set(4, 8, "Http enabled: " .. tostring(cmp.isHttpEnabled()))
 end
---build:ignore=LITE
+--build:ignore=LITE,MINIMAL
 function cmpData.printer3d(cmp)
     gpu.set(4, 7, "Label: " .. cmp.getLabel())
     gpu.set(4, 8, "Button mode: " .. tostring(cmp.isButtonMode()))

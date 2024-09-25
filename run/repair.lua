@@ -3,19 +3,16 @@ local ms = 1
 
 local bioses = {
     ["Vanilla BIOS"] = "lua.bs",
+--build:ignore=LITE
     ["BetterBIOS by KeyTwoZero"] = "better.bs" -- by KeyTwoZero https://codeberg.org/KeyTwoZero/BetterBIOS
+--build:end
 }
 local osHashes = {
-    ["OpenOS"] = "openos.hss"
+    ["OpenOS"] = "openos.hss",
+--build:ignore=LITE
+    -- TODO
+--build:end
 }
-
-local function tkeys(t)
-    local nwt = {}
-    for k, _ in pairs(t) do
-        nwt[#nwt+1] = k
-    end
-    return nwt 
-end
 
 -- --------------------------------------
 

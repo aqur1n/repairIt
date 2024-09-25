@@ -4,10 +4,6 @@ fs, gpu = cmp.proxy(cmp.proxy(cmp.list("eeprom")()).getData()), cmp.proxy(cmp.li
 gpu.bind(cmp.list("screen")(), true)
 sw, sh = gpu.getResolution()
 
-if fs.getLabel() ~= "repairIt" then
-    fs.setLabel("repairIt")
-end
-
 function dofile(path)
 	local strm, rsn = fs.open(path, "r")
 	if strm then
@@ -45,8 +41,20 @@ string.join = function(str, tbl)
     return d
 end
 
+function tkeys(t)
+    local nwt = {}
+    for k, _ in pairs(t) do
+        nwt[#nwt+1] = k
+    end
+    return nwt 
+end
 
-VERSION = "0.2a (%REPAIRIT_VERSION%) " .. _VERSION
+
+VERSION = "0.3a (%REPAIRIT_VERSION%)"
+if fs.getLabel() ~= VERSION then
+    fs.setLabel(VERSION)
+end
+VERSION = VERSION .. " " .. _VERSION
 
 -- loading libraries into globals
 color = dofile("/libs/color.lua")

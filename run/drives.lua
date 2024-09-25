@@ -1,13 +1,35 @@
+-- Пожалуйста, кто-нибудь, перепишите это дермище
 local drives = {}
 local sfs, us, fsc, spth = nil, 1, 0, nil
 local spm, spf = 0, nil
 
 -- ----------------------------------------------------------
 
-local ExplorerMenu = {
-    {"edit", nil, true},
-    {"delete", nil, true}
+local function dltFile()
+    if ui.infoBox("Are you sure? Press ENTER to confirm or another button to cancel", true, true) then
+        cmp.invoke(sfs, "remove", spth)
+    end
+end
+
+local fileMenu = {
+    ["edit"] = {function() dofile("/run/edit.lua").edit(spth) end, true},
+    ["delete"] = {dltFile, true}
 }
+local fposes = {"edit", "delete"}
+
+local function drawFileMenu()
+    gpu.set(2, 3, spth)
+    local fn = ui.select(fposes)
+    if fn ~= nil then
+        if cmp.invoke(sfs, "isReadOnly") and fileMenu[fn][2] then
+            ui.warn({"This action is not", "possible:", "Read-only disk"})
+            drives.draw()
+        else
+            fileMenu[fn][1]()
+        end
+    end
+    drives.back()
+end
 
 -- ----------------------------------------------------------
 
@@ -249,7 +271,11 @@ function drives.draw()
     elseif spth == nil then
         drawMenu()
     else
-        drawExplorer()
+        if cmp.invoke(sfs, "isDirectory", spth or "/") then
+            drawExplorer()
+        else
+            drawFileMenu()
+        end
     end
 end
 
@@ -338,12 +364,9 @@ function drives.keySignal(signal)
                 drives.draw()
             elseif spth == "/" and us == 1 then
                 drives.back()
-            elseif cmp.invoke(sfs, "isDirectory", spf) then
+            else
                 us = 1
                 spth = spf
-                drives.draw()
-            else
-                -- file menu
                 drives.draw()
             end
         end

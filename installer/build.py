@@ -19,17 +19,23 @@ class FilesData:
         for k in self.file_replace[file_name]:
             line = line.replace(k, self.file_replace[file_name][k])
         return line  
-    
+
+GLOBAL_IGNORE = ["/installer", "/LICENSE", "/README.md", "/.git", "/.gitignore", "/empty.lua"]
 FILES: list[FilesData] = [
     FilesData(
         "FULL",
-        ignore = ["installer", "LICENSE", "README.md", ".git", ".gitignore", "empty.lua"],
+        ignore = GLOBAL_IGNORE,
         file_replace = {"/init.lua": {"%REPAIRIT_VERSION%": "Full"}}
     ),
     FilesData(
         "LITE",
-        ignore = ["installer", "LICENSE", "README.md", ".git", ".gitignore", "empty.lua", "hashes", "bios"],
+        ignore = GLOBAL_IGNORE + ["/os"],
         file_replace = {"/init.lua": {"%REPAIRIT_VERSION%": "Lite"}}
+    ),
+    FilesData(
+        "MINIMAL",
+        ignore = GLOBAL_IGNORE + ["/hashes", "/bios", "/os"],
+        file_replace = {"/init.lua": {"%REPAIRIT_VERSION%": "Minimal"}}
     )
 ]
 
@@ -76,7 +82,33 @@ def remove_spaces(string: str) -> str:
         return remove_spaces(string)
     return string
 
-PACK_CHARS = [", ", "{ ", " }", " .. ", " = ", " == ", " ~= ", " >= ", " <= ", " > ", " < ", " ", " + ", " - ", " / ", " * "]
+def text_split(line: str) -> list[str]:
+    splitted_line = []
+    chunk = ""
+    code = None
+    for chr in line:
+        if chr in ("\"", "'"):
+            if code is None:
+                splitted_line.append(chunk)
+                chunk = ""
+                code = chr
+            elif code == chr:
+                chunk += chr
+                splitted_line.append(chunk)
+                chunk = ""
+                code = None
+                continue
+        chunk += chr
+    if chunk:
+        splitted_line.append(chunk)
+    return splitted_line
+
+PACK_CHARS: list[str] = []
+for chr in [",", "{", "}", "..", "=", "==", "~=", ">=", "<=", ">", "<", "", "+", "-", "/", "*"]:
+    PACK_CHARS.append(" " + chr)
+    PACK_CHARS.append(" " + chr + " ")
+    PACK_CHARS.append(chr + " ")
+
 REPLACEMENTS = [",", "{"]
 IGNORE_LINE = ["", " ", "    ", "\n"]
 
@@ -87,10 +119,10 @@ class Builder:
         self.files: list[str] = []
         self.directories: list[str] = []
 
-    def pack(self, line: str, file_name: str) -> str:
+    def pack(self, line: str) -> str:
         lines = []
-        for i, l in enumerate(line.split("\"")):
-            if i % 2 == 0:
+        for i, l in enumerate(text_split(line)):
+            if not l.startswith(("\"", "'")):
                 chunk = l.split("--", 1)[0].replace("  ", " ")
                 if i == 0: 
                     chunk = remove_spaces(chunk)
@@ -104,13 +136,13 @@ class Builder:
             else:
                 lines.append(l)
 
-        return "\"".join(lines)
+        return "".join(lines)
     
     def scan(self, dir: str = WORK_DIR) -> None:
         for file in listdir(dir):
-            if file in self.file_data.ignore:
-                continue
             p = f"{dir}\\{file}".replace("\\\\", "\\")
+            if p.removeprefix(WORK_DIR).replace("\\", "/") in self.file_data.ignore:
+                continue
 
             if path.isfile(p):
                 self.files.append(p)
@@ -136,11 +168,11 @@ class Builder:
                         continue
                     
                     if command is False:
-                        file.write(self.pack(self.file_data.replace(name, l.replace("\n", "")), name))
+                        file.write(self.pack(self.file_data.replace(name, l.replace("\n", ""))))
                     else:
                         c = command(self.file_data.replace(name, l.replace("\n", "")), self.file_data)
                         if isinstance(c, str):
-                            file.write(self.pack(c, name))
+                            file.write(self.pack(c))
                         elif c is True:
                             command = False
 
@@ -164,7 +196,6 @@ def build(file_data: FilesData) -> None:
 
         print(f"[{file_data.version}] Запись файлов...")
         builder.write_files(file)
-        file.close()
 
 # ----------------------------------------------------
 

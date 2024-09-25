@@ -41,29 +41,30 @@ function ui.progressbar(percent, posy)
     computer.pullSignal(0)
 end
 
-function ui.drawBox(title)
+function ui.drawBox(title, width)
+    if not width then width = 24 end
     color.normal()
-    gpu.fill(sw / 2 - 12, sh / 2 - 3, 24, 8, " ")
+    gpu.fill(sw / 2 - width / 2, sh / 2 - 3, width, 8, " ")
 
-    gpu.fill(sw / 2 - 11, sh / 2 - 3, 23, 1, "═")
-    gpu.fill(sw / 2 - 11, sh / 2 + 5, 23, 1, "─")
+    gpu.fill(sw / 2 - width / 2 + 1, sh / 2 - 3, width - 1, 1, "═")
+    gpu.fill(sw / 2 - width / 2 + 1, sh / 2 + 5, width - 1, 1, "─")
 
-    gpu.fill(sw / 2 - 12, sh / 2 - 3, 1, 8, "│")
-    gpu.fill(sw / 2 + 12, sh / 2 - 3, 1, 8, "│")
+    gpu.fill(sw / 2 - width / 2, sh / 2 - 3, 1, 8, "│")
+    gpu.fill(sw / 2 + width / 2, sh / 2 - 3, 1, 8, "│")
 
-    gpu.set(sw / 2 - 12, sh / 2 - 3, "╒")
-    gpu.set(sw / 2 + 12, sh / 2 - 3, "╕")
+    gpu.set(sw / 2 - width / 2, sh / 2 - 3, "╒")
+    gpu.set(sw / 2 + width / 2, sh / 2 - 3, "╕")
 
-    gpu.set(sw / 2 - 12, sh / 2 + 5, "└")
-    gpu.set(sw / 2 + 12, sh / 2 + 5, "┘")
+    gpu.set(sw / 2 - width / 2, sh / 2 + 5, "└")
+    gpu.set(sw / 2 + width / 2, sh / 2 + 5, "┘")
 
     gpu.set(centralize(title), sh / 2 - 3, title)
 end
 
 function ui.infoBox(text, wait, confirm)
-    ui.drawBox("Info")
-    for i = 1, math.floor(#text / 22) + 1 do
-        gpu.set(sw / 2 - 11, sh / 2 - 3 + i, string.sub(text, (22 + 1) * (i - 1), 22 * i))
+    ui.drawBox("Info", 32)
+    for i = 1, math.floor(#text / 30) + 1 do
+        gpu.set(sw / 2 - 15, sh / 2 - 3 + i, string.sub(text, (30 + 1) * (i - 1), 30 * i))
     end
     if wait then
         color.inversion()
@@ -121,7 +122,7 @@ function ui.select(l, checker, fReason)
 
     while true do
         color.normal() 
-        gpu.fill(2, 5, sw - 3, sh - 7, " ")
+        gpu.fill(2, 5, sw, sh - 7, " ")
         for i, v in ipairs(l) do
             if s == i then 
                 color.inversion() 

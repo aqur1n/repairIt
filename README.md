@@ -24,14 +24,14 @@ A utility that will help you manage your disks and check the integrity of your O
 *As well as the keyboard*
 
 ## Table of information about different builds of repairIt
-|                               | LITE    | FULL |
-|-------------------------------|---------|------|
-| Drive management              | Yes     | Yes  |
-| Viewing the contents of disks | Yes     | Yes  |
-| Console                       | Yes     | Yes  |
-| Viewing components            | Not all | All  |
-| Working with the bios         | No      | Yes  |
-| Working with OS               | No      | Yes  |
+|                               | MINIMAL | LITE         | FULL                                                               |
+|-------------------------------|---------|--------------|--------------------------------------------------------------------|
+| Drive management              | Yes     | Yes          | Yes                                                                |
+| Viewing the contents of disks | Yes     | Yes          | Yes                                                                |
+| Console                       | Yes     | Yes          | Yes                                                                |
+| Viewing components            | Not all | Not all      | All                                                                |
+| Working with the bios         | No      | Vanilla only | Vanilla, [BetterBIOS](https://codeberg.org/KeyTwoZero/BetterBIOS)  |
+| Working with OS               | No      | Vanilla only | Yes                                                                |
 
 
 ## Download and install
