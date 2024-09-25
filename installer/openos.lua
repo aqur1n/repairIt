@@ -157,9 +157,10 @@ local unpackData = ""
 local function readBlock(file)
     local d, c, blck = unpackData .. "", "", ""
     while true do
-        c = file:read(256)
+        c = file:read(512)
     	if c then 
             d = d .. c 
+            c = ""
         elseif unpackData == "" then
             break 
         end
@@ -223,6 +224,7 @@ local function unpackBuild(path)
                 break
             end
             unpack(blck)
+            blck = nil
         end
 		file:close()
 	else
