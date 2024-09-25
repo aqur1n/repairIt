@@ -31,7 +31,7 @@ A utility that will help you manage your disks and check the integrity of your O
 | Console                       | Yes     | Yes          | Yes                                                                |
 | Viewing components            | Not all | Not all      | All                                                                |
 | Working with the bios         | No      | Vanilla only | Vanilla, [BetterBIOS](https://codeberg.org/KeyTwoZero/BetterBIOS)  |
-| Working with OS               | No      | Vanilla only | Yes                                                                |
+| Working with OS (coming soon) | No      | OpenOS only  | OpenOS                                                             |
 
 
 ## Download and install
