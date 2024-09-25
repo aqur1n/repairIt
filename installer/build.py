@@ -20,7 +20,7 @@ class FilesData:
             line = line.replace(k, self.file_replace[file_name][k])
         return line  
 
-GLOBAL_IGNORE = ["/installer", "/LICENSE", "/README.md", "/.git", "/.gitignore", "/empty.lua"]
+GLOBAL_IGNORE = ["/installer", "/LICENSE", "/README.md", "/.git", "/.gitignore", "/run/empty.lua"]
 FILES: list[FilesData] = [
     FilesData(
         "FULL",
@@ -34,7 +34,7 @@ FILES: list[FilesData] = [
     ),
     FilesData(
         "MINIMAL",
-        ignore = GLOBAL_IGNORE + ["/hashes", "/bios", "/os"],
+        ignore = GLOBAL_IGNORE + ["/hashes", "/bios", "/os", "/run/repair.lua"],
         file_replace = {"/init.lua": {"%REPAIRIT_VERSION%": "Minimal"}}
     )
 ]
