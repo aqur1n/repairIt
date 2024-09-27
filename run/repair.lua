@@ -16,7 +16,7 @@ local osHashes = {
 
 -- --------------------------------------
 
-local function eeprominstall(cmp, bios) cmp.set(bios) end
+local function eeprominstall(cmp, bios) cmp.set(bios) cmp.setData("") end
 local function repairBios(bname)
     ui.infoBox("Installing "..bname.."...")
     local strm, rsn = fs.open("bios/"..bioses[bname], "r")
