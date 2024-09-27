@@ -77,8 +77,8 @@ if not path.exists("installer/builds/"):
 # ----------------------------------------------------
 
 def remove_spaces(string: str) -> str:
-    string = string.removeprefix('\t').removeprefix(' ')
-    if len(string) > 0 and string[0] in ('\t', ' '):
+    string = string.replace('\t', '').replace(' ', '').replace('  ', '').replace('\t', ' ')
+    if len(string) > 0 and any(chr in string for chr in ('\t', ' ', '  ')):
         return remove_spaces(string)
     return string
 
@@ -109,7 +109,7 @@ for chr in [",", "{", "}", "..", "=", "==", "~=", ">=", "<=", ">", "<", "", "+"
     PACK_CHARS.append(" " + chr + " ")
     PACK_CHARS.append(chr + " ")
 
-REPLACEMENTS = [",", "{"]
+REPLACEMENTS = [",", "{", "{", "}"]
 IGNORE_LINE = ["", " ", "    ", "\n"]
 
 class Builder:
@@ -119,18 +119,16 @@ class Builder:
         self.files: list[str] = []
         self.directories: list[str] = []
 
-    def pack(self, line: str) -> str:
+    def pack(self, file: str) -> str:
         lines = []
-        for i, l in enumerate(text_split(line)):
+        for _, l in enumerate(text_split(file)):
             if not l.startswith(("\"", "'")):
-                chunk = l.split("--", 1)[0].replace("  ", " ")
-                if i == 0: 
-                    chunk = remove_spaces(chunk)
+                chunk = remove_spaces(l)
 
                 for char in PACK_CHARS:
                     chunk = chunk.replace(char, char.replace(" ", ""))
                 for k in REPLACEMENTS:
-                    chunk = chunk.replace(k + "", k)
+                    chunk = chunk.replace(k, k.replace("", ""))
 
                 lines.append(chunk)
             else:
@@ -160,6 +158,7 @@ class Builder:
 
             file.write(f"file={self.file_data.rename.get(name, name)}")
             with open(fl, mode = "r", encoding = "utf-8") as code:
+                packed_data = ""
                 for l in code.readlines():
                     d = l.split("--", 1)
                     if len(d) > 1 and d[1].startswith("build:"):
@@ -168,15 +167,15 @@ class Builder:
                         continue
                     
                     if command is False:
-                        file.write(self.pack(self.file_data.replace(name, l.replace("\n", ""))))
+                        packed_data += self.file_data.replace(name, d[0].replace("\n", ""))
                     else:
-                        c = command(self.file_data.replace(name, l.replace("\n", "")), self.file_data)
+                        c = command(self.file_data.replace(name, d[0].replace("\n", "")), self.file_data)
                         if isinstance(c, str):
-                            file.write(self.pack(c))
+                            packed_data += self.pack(c)
                         elif c is True:
                             command = False
 
-                file.write("")
+            file.write(self.pack(packed_data).removesuffix("") + "")
             print(f"    {self.file_data.rename.get(name, name)} упакован.")
 
 # ----------------------------------------------------
