@@ -29,7 +29,7 @@ FILES: list[FilesData] = [
     ),
     FilesData(
         "LITE",
-        ignore = GLOBAL_IGNORE + ["/os"],
+        ignore = GLOBAL_IGNORE + ["/os", "/bios/better.bs"],
         file_replace = {"/init.lua": {"%REPAIRIT_VERSION%": "Lite"}}
     ),
     FilesData(
