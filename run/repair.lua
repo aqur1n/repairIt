@@ -39,6 +39,14 @@ local function repairBios(bname)
     end
 end
 
+local function hash(str) -- djb2
+    h = 5381
+    for c in str:gmatch"." do
+        h = (bit32.lshift(h, 5) + h) + string.byte(c)
+    end
+    return h
+end
+
 local function repairOS(wfs, osname)
 end
 
