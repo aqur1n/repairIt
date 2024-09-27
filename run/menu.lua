@@ -3,10 +3,10 @@ local options = {
     -- lua name, name, description, position
     {"components", "information about components", "Information about components", 0},
     {"drives", "drives", "Drive management", 1},
+    {"cmd", "console", "Using commands and lua", 2},
 --build:ignore=MINIMAL
-    {"repair", "repair OS/BIOS", "Repair OS/BIOS", 2},
+    {"repair", "repair OS/BIOS", "Repair OS/BIOS", 3},
 --build:end
-    {"cmd", "console", "Using commands and lua", 3},
 
     {nil, "reboot", "Reboot the computer", 5},
     {nil, "shutdown", "Shutdown the computer", 6}
