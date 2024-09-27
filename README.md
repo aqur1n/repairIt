@@ -15,11 +15,10 @@ A utility that will help you manage your disks and check the integrity of your O
 ## System requirements
 |               | Minimal   | Recommended                                  |
 |---------------|-----------|----------------------------------------------|
-| CPU           | Tier 1    | Tier 1                                       |
+| CPU           | Tier 1    | Tier 2                                       |
 | GPU           | Tier 1    | Tier 2                                       |
 | RAM           | 1x Tier 1 | 1x Tier 1.5 or 2x Tier 1                     |
 | Screen        | Tier 1    | Tier 2                                       |
-| Data Card     | -         | Tier 1                                       |
 | Internet Card | -         | To restore the OS (if there are no packages) |
 
 *As well as the keyboard*
