@@ -34,25 +34,25 @@ end
 -- ----------------------------------------------------------
 
 local function rename()
-    ui.drawBox("Rename")
+    ui.drawBox("Rename", 30)
     gpu.set(2, 3, "Rename " .. string.sub(sfs, 1, 8))
 
     color.grey()
-    gpu.set(sw / 2 - 11, sh / 2 - 2, "Enter - save label")
-    gpu.set(sw / 2 - 11, sh / 2 - 1, "Arrows - undo changes")
-    gpu.set(sw / 2 - 11, sh / 2, "Backspace for deletion")
-    gpu.set(sw / 2 - 11, sh / 2 + 1, "Empty string - deleting")
-    gpu.set(sw / 2 - 11, sh / 2 + 2, "the label")
+    gpu.set(sw / 2 - 14, sh / 2 - 2, "Enter - save label")
+    gpu.set(sw / 2 - 14, sh / 2 - 1, "Arrows - undo changes")
+    gpu.set(sw / 2 - 14, sh / 2, "Backspace for deletion")
+    gpu.set(sw / 2 - 14, sh / 2 + 1, "Empty string - deleting")
+    gpu.set(sw / 2 - 14, sh / 2 + 2, "the label")
 
     local l = cmp.invoke(sfs, "getLabel")
     if l == nil then l = "" end
 
-    local chr, cd
+    local chr, cd, c
     while true do
         color.inversion()
-        gpu.fill(sw / 2 - 11, sh / 2 + 4, 23, 1, " ")
+        gpu.fill(sw / 2 - 14, sh / 2 + 4, 29, 1, " ")
         gpu.set(centralize(l), sh / 2 + 4, l)
-        if #l < 16 then
+        if #l < 28 then
             gpu.set(sw / 2 + math.floor(#l / 2), sh / 2 + 4, "┃")
         end
 
@@ -71,8 +71,10 @@ local function rename()
             drives.draw()
             return
         elseif keyboard.isAlphabet(cd) then
-            if #l < 16 then
-                l = l .. unicode.char(chr)
+            if #l < 28 then
+                c = unicode.char(chr)
+                if #c > 1 then c = "?" end
+                l = l .. c
             end
         end
     end
