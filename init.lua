@@ -60,6 +60,9 @@ VERSION = VERSION .. " " .. _VERSION
 color = dofile("/libs/color.lua")
 keyboard = dofile("/libs/keyboard.lua")
 ui = dofile("/libs/ui.lua")
+if _VERSION ~= "Lua 5.2" then
+    bit32 = dofile("/libs/bit32.lua")
+end
 
 function screenClear()
     color.normal()
