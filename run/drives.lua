@@ -52,13 +52,13 @@ local function rename()
         color.inversion()
         gpu.fill(sw / 2 - 14, sh / 2 + 4, 29, 1, " ")
         gpu.set(centralize(l), sh / 2 + 4, l)
-        if #l < 28 then
-            gpu.set(sw / 2 + math.floor(#l / 2), sh / 2 + 4, "┃")
+        if unicode.len(l) < 28 then
+            gpu.set(sw / 2 + math.floor(unicode.len(l) / 2), sh / 2 + 4, "┃")
         end
 
         chr, cd = keyboard.waitChar() 
         if cd == keyboard.BACKSPACE then
-            l = string.sub(l, 1, -2)
+            l = unicode.sub(l, 1, -2)
         elseif cd == keyboard.ENTER then
             if l == "" then l = nil end
             local rs, err = pcall(cmp.invoke, sfs, "setLabel", l)
@@ -71,9 +71,8 @@ local function rename()
             drives.draw()
             return
         elseif keyboard.isAlphabet(cd) then
-            if #l < 28 then
+            if unicode.len(l) < 28 then
                 c = unicode.char(chr)
-                if #c > 1 then c = "?" end
                 l = l .. c
             end
         end
@@ -280,8 +279,6 @@ function drives.draw()
         end
     end
 end
-
-function drives.upd() end
 
 function drives.back() 
     us = 1

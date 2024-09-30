@@ -22,7 +22,7 @@ function dofile(path)
 end
 
 function centralize(text)
-	return math.floor(sw / 2 - #tostring(text) / 2)
+	return math.floor(sw / 2 - unicode.len(tostring(text)) / 2)
 end
 
 string.split = function(str, sep)

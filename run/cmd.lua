@@ -91,7 +91,7 @@ function cmd.init()
     ui.header()
     cmd.draw() 
 
-    local chr, cd, uchr
+    local chr, cd
     while true do
         chr, cd = keyboard.waitChar(0.5) 
         if chr == nil then
@@ -130,9 +130,9 @@ function cmd.init()
             end
         elseif cd == keyboard.BACKSPACE then
             if cur == 1 then
-                mcmmds[mi] = string.sub(mcmmds[mi], 1, -2)
+                mcmmds[mi] = unicode.sub(mcmmds[mi], 1, -2)
             else
-                mcmmds[mi] = string.sub(mcmmds[mi], 1, -cur - 1) .. string.sub(mcmmds[mi], -cur + 1)
+                mcmmds[mi] = unicode.sub(mcmmds[mi], 1, -cur - 1) .. unicode.sub(mcmmds[mi], -cur + 1)
             end
         elseif cd == keyboard.ARRW_UP then
             cur = 1
@@ -160,15 +160,10 @@ function cmd.init()
                 mi = #mcmmds
             end
 
-            uchr = unicode.char(chr) -- Пожалуйста помогите с ру буквами...
-            if #uchr > 1 then 
-                uchr = "?" 
-            end
-
             if cur == 1 then
-                mcmmds[mi] = mcmmds[mi] .. uchr
+                mcmmds[mi] = mcmmds[mi] .. unicode.char(chr)
             else
-                mcmmds[mi] = string.sub(mcmmds[mi], 1, -cur) .. uchr .. string.sub(mcmmds[mi], -cur + 1)
+                mcmmds[mi] = unicode.sub(mcmmds[mi], 1, -cur) .. unicode.char(chr) .. unicode.sub(mcmmds[mi], -cur + 1)
             end
         end
         cmd.draw()
@@ -182,7 +177,7 @@ function cmd.draw()
     gpu.set(1, sh, (cmds and cmds.char or ">") .. " ")
     gpu.set(3, sh, string.sub(mcmmds[mi], -sw - cur + 4))
 
-    local pos = 4 + #mcmmds[mi] - cur
+    local pos = 4 + unicode.len(mcmmds[mi]) - cur
     if pos > sw then pos = sw end
     local chr, _, _, _, _ = gpu.get(pos, sh)
     if m then
