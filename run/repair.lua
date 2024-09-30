@@ -95,8 +95,6 @@ function repair.draw()
     end
 end
 
-function repair.upd() end
-
 function repair.keySignal(signal) 
     if signal[4] == keyboard.ARRW_DOWN then
         if ms >= #repairMenu then 
