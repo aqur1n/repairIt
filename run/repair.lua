@@ -4,7 +4,8 @@ local ms = 1
 local bioses = {
     ["Vanilla BIOS"] = "lua.bs",
 --build:ignore=LITE
-    ["BetterBIOS by KeyTwoZero"] = "better.bs" -- by KeyTwoZero https://codeberg.org/KeyTwoZero/BetterBIOS
+    ["BetterBIOS by KeyTwoZero"] = "better.bs", -- by KeyTwoZero https://codeberg.org/KeyTwoZero/BetterBIOS
+    ["advancedLoader by Luca_S"] = "advloader.bs" -- by Luca_S https://oc.cil.li/topic/1707-advancedloader-better-bios/
 --build:end
 }
 local osHashes = {
