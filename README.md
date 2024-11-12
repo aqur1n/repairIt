@@ -30,7 +30,7 @@ A utility that will help you manage your disks and check the integrity of your O
 | Viewing the contents of disks | Yes     | Yes          | Yes                                                                |
 | Console                       | Yes     | Yes          | Yes                                                                |
 | Viewing components            | Not all | Not all      | All                                                                |
-| Working with the bios         | No      | Vanilla only | Vanilla, [BetterBIOS](https://codeberg.org/KeyTwoZero/BetterBIOS)  |
+| Working with the bios         | No      | Vanilla only | Vanilla, [BetterBIOS](https://codeberg.org/KeyTwoZero/BetterBIOS), [advancedLoader](https://oc.cil.li/topic/1707-advancedloader-better-bios/)  |
 | Working with OS (coming soon) | No      | OpenOS only  | OpenOS                                                             |
 
 
